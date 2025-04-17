@@ -14,6 +14,7 @@ def say_hello_json():
         "message": "Hello!",
         "hobbies": ["Fishing", "Swimming", "Watching Reality Shows"]
     }
+
 @hello_world_bp.get("/broken-endpoint-with-broken-server-code")
 def broken_endpoint():
     response_body = {
