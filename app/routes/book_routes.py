@@ -24,7 +24,7 @@ def get_all_books():
 def get_one_book(book_id):
     try:
         book_id = int(book_id)
-    except:
+    except ValueError:
         return {"message": f"book {book_id} invalid"}, 400
 
     for book in books:
