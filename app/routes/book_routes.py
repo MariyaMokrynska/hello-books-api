@@ -1,7 +1,32 @@
-from flask import Blueprint, abort, make_response  # additional imports
-# from app.models.book import books
+from flask import Blueprint, abort, make_response, request
+from app.models.book import Book
+from ..db import db
 
 books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
+
+
+@books_bp.post("")
+def create_book():
+    request_body = request.get_json()
+    title = request_body["title"]
+    description = request_body["description"]
+
+    new_book = Book(title=title, description=description)
+    db.session.add(new_book)
+    db.session.commit()
+
+    response = {
+        "id": new_book.id,
+        "title": new_book.title,
+        "description": new_book.description,
+    }
+    return response, 201
+
+
+# from flask import Blueprint, abort, make_response  # additional imports
+# from app.models.book import books
+
+# books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 
 # treat a URI the same whether or not it ends in `/`
 # @books_bp.get("", strict_slashes=False)
@@ -43,8 +68,6 @@ books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 
 #     response = {"message": f"book {book_id} not found"}
 #     abort(make_response(response, 404))
-
-
 """ @books_bp.get("/<book_id>")
 def get_one_book(book_id):
     try:
