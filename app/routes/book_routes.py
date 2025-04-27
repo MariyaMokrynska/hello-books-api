@@ -5,6 +5,36 @@ from ..db import db
 books_bp = Blueprint("books_bp", __name__, url_prefix="/books")
 
 
+def validate_book(book_id):
+    try:
+        book_id = int(book_id)
+    except:
+        response = {"message": f"book {book_id} invalid"}
+        abort(make_response(response, 400))
+
+    query = db.select(Book).where(Book.id == book_id)
+    book = db.session.scalar(query)
+
+    if not book:
+        response = {"message": f"book {book_id} not found"}
+        abort(make_response(response, 404))
+
+    return book
+
+
+@books_bp.get("/<book_id>")
+def get_one_book(book_id):
+    # query = db.select(Book).where(Book.id == book_id)
+    # book = db.session.scalar(query)
+
+    book = validate_book(book_id)
+    return {
+        "id": book.id,
+        "title": book.title,
+        "description": book.description
+    }
+
+
 @books_bp.get("")
 def get_all_books():
     query = db.select(Book).order_by(Book.id)
