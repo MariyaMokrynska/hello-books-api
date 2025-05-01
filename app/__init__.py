@@ -3,9 +3,6 @@ from .db import db, migrate
 from .models import book
 from .routes.book_routes import books_bp
 import os
-from dotenv import load_dotenv
-
-load_dotenv()
 
 
 def create_app(config=None):
