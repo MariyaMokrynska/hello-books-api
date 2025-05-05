@@ -7,7 +7,11 @@ class Book(db.Model):
     title: Mapped[str]
     description: Mapped[str]
 
-
+    @classmethod
+    def from_dict(cls, book_data):
+        new_book = Book(title=book_data["title"],
+                        description=book_data["description"])
+        return new_book
 # class Book:
 #     def __init__(self, id, title, description):
 #         self.id = id
