@@ -49,11 +49,12 @@ def get_one_book(book_id):
     # book = db.session.scalar(query)
 
     book = validate_book(book_id)
-    return {
-        "id": book.id,
-        "title": book.title,
-        "description": book.description
-    }
+    # return {
+    #     "id": book.id,
+    #     "title": book.title,
+    #     "description": book.description
+    # }
+    return book.to_dict()
 
 
 @books_bp.get("")
@@ -82,13 +83,14 @@ def get_all_books():
 
     books_response = []
     for book in books:
-        books_response.append(
-            {
-                "id": book.id,
-                "title": book.title,
-                "description": book.description
-            }
-        )
+        books_response.append(book.to_dict())
+        # books_response.append(
+        #     {
+        #         "id": book.id,
+        #         "title": book.title,
+        #         "description": book.description
+        #     }
+        # )
     return books_response
 
 
@@ -106,12 +108,15 @@ def create_book():
     db.session.add(new_book)
     db.session.commit()
 
-    response = {
-        "id": new_book.id,
-        "title": new_book.title,
-        "description": new_book.description,
-    }
-    return response, 201
+    # response = {
+    #     "id": new_book.id,
+    #     "title": new_book.title,
+    #     "description": new_book.description,
+    # }
+    # return response, 201
+    return new_book.to_dict(), 201
+
+
 # @books_bp.post("")
 # def create_book():
 #     request_body = request.get_json()
