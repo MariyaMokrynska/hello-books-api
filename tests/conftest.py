@@ -4,9 +4,15 @@ from app.db import db
 from flask.signals import request_finished
 from dotenv import load_dotenv
 import os
-# ...
 from app.models.book import Book
-# ...
+from app.models.author import Author
+
+
+@pytest.fixture
+def one_saved_author(app):
+    author = Author(name="New Author 1")
+    db.session.add(author)
+    db.session.commit()
 
 
 @pytest.fixture
