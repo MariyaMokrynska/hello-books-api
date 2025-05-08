@@ -2,7 +2,7 @@ from flask import Blueprint, request, make_response, abort
 from app.models.author import Author
 from app.models.book import Book
 from ..db import db
-from .route_utilities import validate_model
+from .route_utilities import validate_model, create_model, get_models_with_filters
 
 bp = Blueprint("authors_bp", __name__, url_prefix="/authors")
 
@@ -13,18 +13,26 @@ def create_book_with_author(author_id):
 
     request_body = request.get_json()
     request_body["author_id"] = author.id
+    return create_model(Book, request_body)
 
-    try:
-        new_book = Book.from_dict(request_body)
+# @bp.post("/<author_id>/books")
+# def create_book_with_author(author_id):
+#     author = validate_model(Author, author_id)
 
-    except KeyError as error:
-        response = {"message": f"Invalid request: missing {error.args[0]}"}
-        abort(make_response(response, 400))
+#     request_body = request.get_json()
+#     request_body["author_id"] = author.id
 
-    db.session.add(new_book)
-    db.session.commit()
+#     try:
+#         new_book = Book.from_dict(request_body)
 
-    return make_response(new_book.to_dict(), 201)
+#     except KeyError as error:
+#         response = {"message": f"Invalid request: missing {error.args[0]}"}
+#         abort(make_response(response, 400))
+
+#     db.session.add(new_book)
+#     db.session.commit()
+
+#     return make_response(new_book.to_dict(), 201)
 
 
 @bp.get("/<author_id>/books")
@@ -37,30 +45,39 @@ def get_books_by_author(author_id):
 @bp.post("")
 def create_author():
     request_body = request.get_json()
+    return create_model(Author, request_body)
 
-    try:
-        new_author = Author.from_dict(request_body)
+# @bp.post("")
+# def create_author():
+#     request_body = request.get_json()
 
-    except KeyError as error:
-        response = {"message": f"Invalid request: missing {error.args[0]}"}
-        abort(make_response(response, 400))
+#     try:
+#         new_author = Author.from_dict(request_body)
 
-    db.session.add(new_author)
-    db.session.commit()
+#     except KeyError as error:
+#         response = {"message": f"Invalid request: missing {error.args[0]}"}
+#         abort(make_response(response, 400))
 
-    return make_response(new_author.to_dict(), 201)
+#     db.session.add(new_author)
+#     db.session.commit()
+
+#     return make_response(new_author.to_dict(), 201)
 
 
 @bp.get("")
 def get_all_authors():
-    query = db.select(Author)
+    return get_models_with_filters(Author, request.args)
 
-    name_param = request.args.get("name")
-    if name_param:
-        query = query.where(Author.name.ilike(f"%{name_param}%"))
+# @bp.get("")
+# def get_all_authors():
+#     query = db.select(Author)
 
-    authors = db.session.scalars(query.order_by(Author.id))
-    # Use list comprehension syntax to create the list `authors_response`
-    authors_response = [author.to_dict() for author in authors]
+#     name_param = request.args.get("name")
+#     if name_param:
+#         query = query.where(Author.name.ilike(f"%{name_param}%"))
 
-    return authors_response
+#     authors = db.session.scalars(query.order_by(Author.id))
+#     # Use list comprehension syntax to create the list `authors_response`
+#     authors_response = [author.to_dict() for author in authors]
+
+#     return authors_response
